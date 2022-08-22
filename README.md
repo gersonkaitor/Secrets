@@ -1,6 +1,6 @@
 # Secrets
 
-There are level of Authentication and security 
+There are levels of Authentication and security 
 
 Level 1 - Users with username and password \
 Level 2 - Database encryption using mongoose-encryption and setting up an environment variable to keep the secret safe \
