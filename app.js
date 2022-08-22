@@ -69,7 +69,6 @@ passport.use(new GoogleStrategy({
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
     },
     (accessToken, refreshToken, profile, cb) => {
-        console.log(profile);
         User.findOrCreate({
             googleId: profile.id
         }, function (err, user) {
@@ -86,7 +85,6 @@ passport.use(new FacebookStrategy({
 
     },
     (accessToken, refreshToken, profile, cb) => {
-        console.log(profile);
         User.findOrCreate({
             facebookId: profile.id
         }, function (err, user) {
@@ -111,7 +109,7 @@ app.get("/auth/google/secrets",
         failureRedirect: "/login"
     }),
     function (req, res) {
-        // Successful authentication, redirect home.
+        // Successful authentication, redirect secret page.
         res.redirect("/secrets");
     });
 
@@ -124,7 +122,7 @@ app.get('/auth/facebook/secrets',
         failureRedirect: "/login"
     }),
     function (req, res) {
-        // Successful authentication, redirect home.
+        // Successful authentication, redirect secret page.
         res.redirect("/secrets");
     });
 
@@ -138,13 +136,43 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/secrets", (req, res) => {
+    //find user with not empty secret field
+    User.find({"secret" : {$ne:null}}, (err, foundUsers) =>{
+        if(err){
+            console.log(err);
+        }else{
+            if(foundUsers){
+                // render all users with secret
+                res.render("secrets", {usersWithSecret: foundUsers})
+            }
+        }
+    })
+});
+
+app.get("/submit", (req,res) =>{
     if (req.isAuthenticated()) {
-        res.render("secrets");
+        res.render("submit");
     } else {
         res.redirect("/login");
     }
 });
 
+app.post("/submit", (req,res) =>{
+    const submittedSecret = req.body.secret
+
+    User.findById(req.user.id, (err,foundUser) =>{
+        if(err){
+            console.log(err);
+        }else{
+            if(foundUser){
+                foundUser.secret = submittedSecret;
+                foundUser.save(() =>{
+                    res.redirect("/secrets")
+                })
+            }
+        }
+    });
+});
 
 app.post("/register", (req, res) => {
 
@@ -182,8 +210,6 @@ app.post("/login", (req, res) => {
     });
 
 });
-
-
 
 app.get("/logout", (req, res) => {
     req.logout((err) => {
