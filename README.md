@@ -2,8 +2,8 @@
 
 There are level of Authentication and security__
 
-Level 1 - Users with username and password_
-Level 2 - Database encryption using mongoose-encryption and setting up an environment variable to keep the secret safe
+Level 1 - Users with username and password \
+Level 2 - Database encryption using mongoose-encryption and setting up an environment variable to keep the secret safe <br>
 Level 3 - Hashing Password using md5
 Level 4 - Salting and hashing password with bcrypt
 Level 5 - Cookies and sessions
